@@ -194,8 +194,8 @@
         .from(moment.querySelector('.moment__dot'), { scale: 0, duration: 0.5, ease: 'back.out(3)' })
         .from(moment.querySelectorAll('.moment__art path, .moment__art circle'), { drawSVG: 0, duration: 1.2, stagger: 0.08, ease: 'power2.inOut' }, 0)
         .from(moment.querySelector('.moment__text'), { autoAlpha: 0, x: fromSide, duration: 0.8, ease: 'power3.out' }, 0.15);
-      const badge = moment.querySelector('.moment__art text');
-      if (badge) tl.from(badge, { autoAlpha: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.5, ease: 'back.out(2)' }, 0.9);
+      const badge = moment.querySelectorAll('.moment__art text');
+      if (badge.length) tl.from(badge, { autoAlpha: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.5, ease: 'back.out(2)' }, 0.9);
     });
   }
 

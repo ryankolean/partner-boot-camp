@@ -91,6 +91,14 @@ a { color: inherit; }
   font-weight: 600;
   letter-spacing: -0.02em;
 }
+.moment__badge-sub {
+  fill: var(--olive-deep);
+  stroke: none;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 11px;
+}
+.art .art__heart { fill: var(--blush); }
 
 /* Buttons */
 .btn {
