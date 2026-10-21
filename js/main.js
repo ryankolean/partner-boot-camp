@@ -154,9 +154,10 @@
       });
       tweens.push(fall, sway);
     });
+    // Keep them falling whenever any part of the hero is on screen, including scroll position 0.
     ScrollTrigger.create({
       trigger: '.opening',
-      start: 'top top',
+      start: 'top bottom',
       end: 'bottom top',
       onToggle: (self) => tweens.forEach((t) => (self.isActive ? t.resume() : t.pause())),
     });
@@ -187,12 +188,14 @@
 
     timeline.querySelectorAll('.moment').forEach((moment, i) => {
       const fromSide = wide && i % 2 === 0 ? 36 : -28;
-      gsap.timeline({
+      const tl = gsap.timeline({
         scrollTrigger: { trigger: moment, start: 'top 70%', toggleActions: 'play none none reverse' },
       })
         .from(moment.querySelector('.moment__dot'), { scale: 0, duration: 0.5, ease: 'back.out(3)' })
-        .from(moment.querySelectorAll('.moment__art > *'), { drawSVG: 0, duration: 1.2, stagger: 0.08, ease: 'power2.inOut' }, 0)
+        .from(moment.querySelectorAll('.moment__art path, .moment__art circle'), { drawSVG: 0, duration: 1.2, stagger: 0.08, ease: 'power2.inOut' }, 0)
         .from(moment.querySelector('.moment__text'), { autoAlpha: 0, x: fromSide, duration: 0.8, ease: 'power3.out' }, 0.15);
+      const badge = moment.querySelector('.moment__art text');
+      if (badge) tl.from(badge, { autoAlpha: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.5, ease: 'back.out(2)' }, 0.9);
     });
   }
 

@@ -83,6 +83,14 @@ a { color: inherit; }
   overflow: visible;
 }
 .art .art__accent { stroke: var(--terracotta); }
+.moment__badge {
+  fill: var(--terracotta);
+  stroke: none;
+  font-family: var(--serif);
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
 
 /* Buttons */
 .btn {
