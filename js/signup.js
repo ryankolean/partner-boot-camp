@@ -75,13 +75,21 @@
 
     setBusy(true, button);
     try {
+      // Kit's bot guard can hold a signup until the visitor passes a quick check on kit.com.
+      const checks = [];
       if (!waitlistSent) {
-        await send(WAITLIST_FORM, waitlistPayload(withPartner));
+        const mine = await send(WAITLIST_FORM, waitlistPayload(withPartner));
+        if (mine.status === 'quarantined' && mine.url) checks.push({ url: mine.url, label: 'Finish my signup' });
         waitlistSent = true;
       }
-      if (withPartner) await send(PARTNER_FORM, partnerPayload());
+      if (withPartner) {
+        const theirs = await send(PARTNER_FORM, partnerPayload());
+        if (theirs.status === 'quarantined' && theirs.url) {
+          checks.push({ url: theirs.url, label: `Send ${partner.name.value.trim()}'s invite` });
+        }
+      }
       finished = true;
-      celebrate(withPartner, origin);
+      celebrate(withPartner, origin, checks);
     } catch (err) {
       showError(
         withPartner && waitlistSent
@@ -128,7 +136,7 @@
     });
     if (!res.ok) throw new Error(`Kit responded ${res.status}`);
     const data = await res.json().catch(() => ({}));
-    if (data.status && data.status !== 'success') throw new Error(`Kit status ${data.status}`);
+    if (data.status && !['success', 'quarantined'].includes(data.status)) throw new Error(`Kit status ${data.status}`);
     return data;
   }
 
@@ -140,12 +148,28 @@
     form.querySelector('[data-preview-note]').hidden = !note;
   }
 
-  function celebrate(withPartner, origin) {
+  function celebrate(withPartner, origin, checks = []) {
     step = 3;
-    form.querySelector('[data-done-name]').textContent = you.name.value.trim() || 'friend';
+    const checkBox = form.querySelector('[data-done-check]');
+    const links = checkBox.querySelector('[data-check-links]');
+    links.replaceChildren(
+      ...checks.map(({ url, label }) => {
+        const a = document.createElement('a');
+        a.className = 'btn';
+        a.href = url;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = label;
+        return a;
+      })
+    );
+    checkBox.hidden = checks.length === 0;
+    const name = you.name.value.trim() || 'friend';
+    const held = checks.length > 0;
+    form.querySelector('[data-done-title]').textContent = held ? `Almost there, ${name}.` : `You're in, ${name}.`;
     form.querySelector('[data-done-partner]').textContent = partner.name.value.trim() || 'your partner';
-    form.querySelector('[data-done-solo]').hidden = withPartner;
-    form.querySelector('[data-done-invite]').hidden = !withPartner;
+    form.querySelector('[data-done-solo]').hidden = held || withPartner;
+    form.querySelector('[data-done-invite]').hidden = held || !withPartner;
     show(3, panels[2]);
     burst(origin);
   }
