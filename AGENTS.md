@@ -15,7 +15,7 @@ Static site, no build. See README.md for structure and the Kit setup.
 
 ## Verify before shipping
 
-Serve locally (`python3 -m http.server 8793`), check 375 / 768 / 1280 with no horizontal scroll and no console errors. The in-app browser pane stalls requestAnimationFrame; shim it to a timer when testing motion.
+Serve locally (`python3 tools/serve.py 8812`), check 375 / 768 / 1280 with no horizontal scroll and no console errors. The in-app browser pane stalls requestAnimationFrame; shim it to a timer when testing motion.
 
 ## Deploy
 

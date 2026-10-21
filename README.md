@@ -22,7 +22,7 @@ No build step. Static HTML, CSS, and vanilla JS served by GitHub Pages from `mai
 Run locally:
 
 ```bash
-python3 -m http.server 8793
+python3 tools/serve.py 8812
 ```
 
 ## Kit

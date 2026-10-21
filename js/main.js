@@ -94,15 +94,17 @@
       const { motion, wide, tall } = ctx.conditions;
       if (!motion) return;
 
+      // Create triggers in page order: the pinned levels spread adds scroll distance,
+      // so everything below it must be measured after the pin exists.
       heroIntro();
       petals(wide);
       threadAndMoments(wide);
       spread();
+      const cleanupLevels = wide ? levelsSpread(tall) : levelsStacked();
       philosophy();
       shelfArrival();
       promises();
-      if (wide) return levelsSpread(tall);
-      levelsStacked();
+      return cleanupLevels;
     }
   );
 
@@ -112,7 +114,16 @@
     gsap.set([copy, art], { visibility: 'visible' });
     const split = SplitText.create('[data-split]', { type: 'words,lines', mask: 'lines' });
     gsap.timeline({ defaults: { ease: 'power3.out' } })
-      .from(split.words, { yPercent: 115, duration: 1.1, stagger: 0.07, onComplete: () => split.revert() })
+      .from(split.words, {
+        yPercent: 115,
+        duration: 1.1,
+        stagger: 0.07,
+        // Restoring the headline changes its height, so re-measure every trigger below it.
+        onComplete: () => {
+          split.revert();
+          ScrollTrigger.refresh();
+        },
+      })
       .from('[data-rise]', { y: 22, autoAlpha: 0, duration: 0.9, stagger: 0.12 }, 0.55)
       .from(art.children, { drawSVG: 0, duration: 1.8, stagger: 0.09, ease: 'power2.inOut' }, 0.2)
       .from('.opening__scroll', { autoAlpha: 0, duration: 0.8 }, 1.4);
@@ -271,17 +282,34 @@
   function philosophy() {
     const board = document.querySelector('.scoreboard');
     if (!board) return;
+    // Scrubbed so the tallies, the scribble and the 80/80 follow the reader's scroll exactly.
     gsap.timeline({
-      scrollTrigger: { trigger: board, start: 'top 70%', toggleActions: 'play none none reverse' },
+      scrollTrigger: {
+        trigger: board,
+        start: 'top 85%',
+        end: 'center 50%',
+        scrub: 0.5,
+        // A refresh resets scrubbed timelines and only re-renders the first step. Visiting the end and
+        // coming back puts every step (scribble, 80/80) in its correct state for the current scroll.
+        onRefresh: (self) => {
+          const tl = self.animation;
+          const t = tl.time();
+          tl.time(tl.duration(), true).time(t, true);
+        },
+      },
     })
-      .from(board.querySelectorAll('svg > path:not([data-scribble]), [data-tally] path'), {
-        drawSVG: 0,
-        duration: 0.45,
-        stagger: 0.12,
-        ease: 'power1.inOut',
-      })
-      .from('[data-scribble]', { drawSVG: 0, duration: 1.1, ease: 'power2.inOut' }, '+=0.25')
-      .from('[data-result]', { autoAlpha: 0, scale: 0.6, rotation: -8, duration: 0.8, ease: 'back.out(2)' }, '-=0.35');
+      .fromTo(
+        board.querySelectorAll('svg > path:not([data-scribble]), [data-tally] path'),
+        { drawSVG: '0%' },
+        { drawSVG: '100%', duration: 0.45, stagger: 0.12, ease: 'power1.inOut', immediateRender: true }
+      )
+      .fromTo('[data-scribble]', { drawSVG: '0%' }, { drawSVG: '100%', duration: 1.1, ease: 'power2.inOut', immediateRender: true }, '+=0.25')
+      .fromTo(
+        '[data-result]',
+        { autoAlpha: 0, scale: 0.6, rotation: -8 },
+        { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, ease: 'back.out(2)', immediateRender: true },
+        '-=0.35'
+      );
   }
 
   // Books slide in from beyond the right edge as the shelf scrolls into view, overshooting softly into place.
@@ -482,17 +510,21 @@
     const u = parseFloat(getComputedStyle(row.querySelector('.slot')).fontSize);
     const w = Math.round(Math.min(row.offsetWidth + u * 4, document.documentElement.clientWidth - 8));
     svg.style.width = `${w}px`;
+    // The top edge is dead flat at y = TOP so every book clears it by the same gap;
+    // the hand-drawn wobble lives on the front edge, the ends and the brackets.
+    const TOP = 5;
+    const FRONT = TOP + 12;
     const board = [
-      `M 2 3 C ${w * 0.3} 1.5, ${w * 0.65} 5, ${w - 2} 3`,
-      `M 7 15 C ${w * 0.35} 16.5, ${w * 0.7} 13, ${w - 7} 15`,
-      `M 2 3 C -1 7, 2 13, 7 15`,
-      `M ${w - 2} 3 C ${w + 1} 7, ${w - 2} 13, ${w - 7} 15`,
+      `M 2 ${TOP} L ${w - 2} ${TOP}`,
+      `M 7 ${FRONT} C ${w * 0.35} ${FRONT + 1.5}, ${w * 0.7} ${FRONT - 2}, ${w - 7} ${FRONT}`,
+      `M 2 ${TOP} C -1 ${TOP + 4}, 2 ${FRONT - 2}, 7 ${FRONT}`,
+      `M ${w - 2} ${TOP} C ${w + 1} ${TOP + 4}, ${w - 2} ${FRONT - 2}, ${w - 7} ${FRONT}`,
     ].join(' ');
     const a = w * 0.16;
     const b = w * 0.84;
     const brackets = [
-      `M ${a} 15 C ${a} 32, ${a - 5} 44, ${a - 20} 50 C ${a - 29} 53, ${a - 33} 45, ${a - 26} 41`,
-      `M ${b} 15 C ${b} 32, ${b + 5} 44, ${b + 20} 50 C ${b + 29} 53, ${b + 33} 45, ${b + 26} 41`,
+      `M ${a} ${FRONT} C ${a} ${FRONT + 17}, ${a - 5} ${FRONT + 29}, ${a - 20} ${FRONT + 35} C ${a - 29} ${FRONT + 38}, ${a - 33} ${FRONT + 30}, ${a - 26} ${FRONT + 26}`,
+      `M ${b} ${FRONT} C ${b} ${FRONT + 17}, ${b + 5} ${FRONT + 29}, ${b + 20} ${FRONT + 35} C ${b + 29} ${FRONT + 38}, ${b + 33} ${FRONT + 30}, ${b + 26} ${FRONT + 26}`,
     ].join(' ');
     svg.querySelector('[data-plank-board]').setAttribute('d', board);
     svg.querySelector('[data-plank-brackets]').setAttribute('d', brackets);
