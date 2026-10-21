@@ -204,7 +204,9 @@ a { color: inherit; }
   position: relative;
   padding: var(--chapter-pad) var(--gutter);
 }
-.chapter:nth-of-type(even) { background: var(--paper); }
+/* Alternating chapter backgrounds, set per section: the pinned Chapter 3 gets wrapped in a
+   pin-spacer on desktop, which would throw off an nth-of-type count for every section after it. */
+.story, .levels, .reading, .join { background: var(--paper); }
 .story .moment__dot { box-shadow: 0 0 0 6px var(--paper); }
 .story .spread { background: var(--cream); }
 
