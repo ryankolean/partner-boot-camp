@@ -42,8 +42,9 @@
     if (!target) return;
     e.preventDefault();
     const land = () => {
-      const focusEl = hash === '#join' ? document.getElementById('you-name') : target;
-      if (focusEl !== document.getElementById('you-name')) focusEl.setAttribute('tabindex', '-1');
+      const email = document.getElementById('you-email');
+      const focusEl = hash === '#join' && email ? email : target;
+      if (focusEl !== email) focusEl.setAttribute('tabindex', '-1');
       focusEl.focus({ preventScroll: true });
     };
     if (lenis) {

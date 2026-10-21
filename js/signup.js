@@ -1,11 +1,9 @@
-// Partner Boot Camp: two-step Kit signup with an optional partner invite.
-// Posts to Kit's public form endpoints. No API keys live here.
+// Partner Boot Camp: email-only Kit waitlist signup.
+// Posts to Kit's public form endpoint. No API keys live here.
 (() => {
   const KIT = 'https://app.kit.com/forms/';
   const WAITLIST_FORM = '10077301';
-  const PARTNER_FORM = '10077317';
   const TAG_WAITLIST = '24868778';
-  const TAG_INVITED = '24868779';
   const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const PETAL = 'M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z';
 
@@ -15,184 +13,109 @@
   const $ = (sel) => form.querySelector(sel);
   const panels = [...form.querySelectorAll('[data-panel]')];
   const errorBox = $('[data-signup-error]');
-  const you = { name: $('#you-name'), email: $('#you-email') };
-  const partner = { name: $('#partner-name'), email: $('#partner-email'), note: $('#partner-note') };
+  const email = $('#you-email');
   const trap = $('#you-website');
+  const button = $('button[type="submit"]');
   const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  let step = 1;
-  let waitlistSent = false;
-  let finished = false;
+  email.addEventListener('input', () => email.removeAttribute('aria-invalid'));
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (step === 1) return toStepTwo();
-    const button = e.submitter || $('[data-action="invite"]');
-    finish(button.dataset.action === 'invite', button);
-  });
-
-  [you.name, partner.name, partner.note].forEach((el) => el.addEventListener('input', updatePreview));
-  [you.name, you.email, partner.name, partner.email].forEach((el) =>
-    el.addEventListener('input', () => el.removeAttribute('aria-invalid'))
-  );
-
-  form.querySelectorAll('[data-nudge]').forEach((btn) =>
-    btn.addEventListener('click', () => {
-      partner.note.value = btn.dataset.nudge;
-      updatePreview();
-      partner.note.focus();
-    })
-  );
-
-  // If someone leaves during step two, still save their spot.
-  window.addEventListener('pagehide', () => {
-    if (step === 2 && !waitlistSent && !finished && !trap.value && navigator.sendBeacon) {
-      navigator.sendBeacon(`${KIT}${WAITLIST_FORM}/subscriptions`, waitlistPayload(false));
-    }
-  });
-
-  function toStepTwo() {
     hideError();
-    if (!check(you.name, you.name.value.trim().length > 0, 'Add your first name so we know what to call you.')) return;
-    if (!check(you.email, EMAIL.test(you.email.value.trim()), 'That email looks incomplete. Check it and try again.')) return;
-    step = 2;
-    updatePreview();
-    show(2, partner.name);
-  }
-
-  async function finish(withPartner, button) {
-    hideError();
-    if (withPartner) {
-      const ownEmail = you.email.value.trim().toLowerCase();
-      const theirEmail = partner.email.value.trim().toLowerCase();
-      if (!check(partner.name, partner.name.value.trim().length > 0, "Add your partner's first name so the invite feels personal.")) return;
-      if (!check(partner.email, EMAIL.test(theirEmail), "Your partner's email looks incomplete. Check it and try again.")) return;
-      if (!check(partner.email, theirEmail !== ownEmail, "That's your email. Add your partner's own address so the invite reaches them.")) return;
+    const value = email.value.trim();
+    if (!EMAIL.test(value)) {
+      email.setAttribute('aria-invalid', 'true');
+      showError('That email looks incomplete. Check it and try again.');
+      email.focus();
+      return;
     }
 
     const origin = button.getBoundingClientRect();
-    if (trap.value) return celebrate(withPartner, origin);
+    if (trap.value) return celebrate(origin, null);
 
-    setBusy(true, button);
+    setBusy(true);
     try {
+      const params = new URLSearchParams();
+      params.set('email_address', value);
+      params.append('tags[]', TAG_WAITLIST);
+      const res = await fetch(`${KIT}${WAITLIST_FORM}/subscriptions`, {
+        method: 'POST',
+        body: params,
+        headers: { Accept: 'application/json' },
+      });
+      if (!res.ok) throw new Error(`Kit responded ${res.status}`);
+      const data = await res.json().catch(() => ({}));
+      if (data.status && !['success', 'quarantined'].includes(data.status)) throw new Error(`Kit status ${data.status}`);
       // Kit's bot guard can hold a signup until the visitor passes a quick check on kit.com.
-      const checks = [];
-      if (!waitlistSent) {
-        const mine = await send(WAITLIST_FORM, waitlistPayload(withPartner));
-        if (mine.status === 'quarantined' && mine.url) checks.push({ url: mine.url, label: 'Finish my signup' });
-        waitlistSent = true;
-      }
-      if (withPartner) {
-        const theirs = await send(PARTNER_FORM, partnerPayload());
-        if (theirs.status === 'quarantined' && theirs.url) {
-          checks.push({ url: theirs.url, label: `Send ${partner.name.value.trim()}'s invite` });
-        }
-      }
-      finished = true;
-      celebrate(withPartner, origin, checks);
+      celebrate(origin, data.status === 'quarantined' && data.url ? data.url : null);
     } catch (err) {
-      showError(
-        withPartner && waitlistSent
-          ? "Your spot is saved, but the invite didn't go out. Check your connection, then press Send the invite again."
-          : "Your spot isn't saved yet. Check your connection, then try again."
-      );
+      showError("Your spot isn't saved yet. Check your connection, then try again.");
     } finally {
-      setBusy(false, button);
+      setBusy(false);
     }
-  }
+  });
 
-  function waitlistPayload(withPartner) {
-    const p = new URLSearchParams();
-    p.set('email_address', you.email.value.trim());
-    p.set('fields[first_name]', you.name.value.trim());
-    p.append('tags[]', TAG_WAITLIST);
-    if (withPartner) {
-      p.set('fields[partner_name]', partner.name.value.trim());
-      p.set('fields[partner_email]', partner.email.value.trim());
-      const note = partner.note.value.trim();
-      if (note) p.set('fields[partner_note]', note);
+  // After signing up, pass the page along to a partner: native share sheet, or copy the link.
+  form.querySelector('[data-share]').addEventListener('click', async (e) => {
+    const btn = e.currentTarget;
+    const url = location.href.split('#')[0];
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: 'Partner Boot Camp', text: 'Want to do this together?', url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        btn.textContent = 'Link copied';
+      }
+    } catch (err) {
+      if (err && err.name !== 'AbortError') btn.textContent = url;
     }
-    return p;
-  }
+  });
 
-  // On the partner's record, the partner_* fields describe the person who invited them.
-  function partnerPayload() {
-    const p = new URLSearchParams();
-    p.set('email_address', partner.email.value.trim());
-    p.set('fields[first_name]', partner.name.value.trim());
-    p.set('fields[partner_name]', you.name.value.trim());
-    p.set('fields[partner_email]', you.email.value.trim());
-    const note = partner.note.value.trim();
-    if (note) p.set('fields[partner_note]', note);
-    p.append('tags[]', TAG_INVITED);
-    return p;
-  }
-
-  async function send(formId, params) {
-    const res = await fetch(`${KIT}${formId}/subscriptions`, {
-      method: 'POST',
-      body: params,
-      headers: { Accept: 'application/json' },
-    });
-    if (!res.ok) throw new Error(`Kit responded ${res.status}`);
-    const data = await res.json().catch(() => ({}));
-    if (data.status && !['success', 'quarantined'].includes(data.status)) throw new Error(`Kit status ${data.status}`);
-    return data;
-  }
-
-  function updatePreview() {
-    form.querySelector('[data-preview="partner"]').textContent = partner.name.value.trim() || 'there';
-    form.querySelector('[data-preview="you"]').textContent = you.name.value.trim() || 'Your partner';
-    const note = partner.note.value.trim();
-    form.querySelector('[data-preview="note"]').textContent = note;
-    form.querySelector('[data-preview-note]').hidden = !note;
-  }
-
-  function celebrate(withPartner, origin, checks = []) {
-    step = 3;
+  function celebrate(origin, checkUrl) {
+    form.querySelector('[data-done-title]').textContent = checkUrl ? 'Almost there.' : "You're in.";
+    form.querySelector('[data-done-ok]').hidden = Boolean(checkUrl);
     const checkBox = form.querySelector('[data-done-check]');
     const links = checkBox.querySelector('[data-check-links]');
-    links.replaceChildren(
-      ...checks.map(({ url, label }) => {
-        const a = document.createElement('a');
-        a.className = 'btn';
-        a.href = url;
-        a.target = '_blank';
-        a.rel = 'noopener';
-        a.textContent = label;
-        return a;
-      })
-    );
-    checkBox.hidden = checks.length === 0;
-    const name = you.name.value.trim() || 'friend';
-    const held = checks.length > 0;
-    form.querySelector('[data-done-title]').textContent = held ? `Almost there, ${name}.` : `You're in, ${name}.`;
-    form.querySelector('[data-done-partner]').textContent = partner.name.value.trim() || 'your partner';
-    form.querySelector('[data-done-solo]').hidden = held || withPartner;
-    form.querySelector('[data-done-invite]').hidden = held || !withPartner;
-    show(3, panels[2]);
+    links.replaceChildren();
+    if (checkUrl) {
+      const a = document.createElement('a');
+      a.className = 'btn';
+      a.href = checkUrl;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = 'Finish my signup';
+      links.append(a);
+    }
+    checkBox.hidden = !checkUrl;
+    show(panels[1]);
     burst(origin);
   }
 
-  function show(n, focusEl) {
+  function show(next) {
     const current = panels.find((p) => !p.hidden);
-    const next = panels[n - 1];
     const swap = () => {
       current.hidden = true;
       next.hidden = false;
-      if (focusEl) focusEl.focus({ preventScroll: true });
+      next.focus({ preventScroll: true });
     };
     if (!window.gsap || reduceMotion()) return swap();
     gsap.to(current, {
       autoAlpha: 0,
-      x: -28,
+      y: -12,
       duration: 0.3,
       ease: 'power2.in',
       onComplete: () => {
         swap();
         gsap.set(current, { clearProps: 'all' });
-        const parts = next.querySelectorAll(':scope > h3, :scope > p, :scope > svg, .field, .invite-preview, .signup__actions');
-        gsap.from(parts, { autoAlpha: 0, y: 18, duration: 0.55, stagger: 0.06, ease: 'power3.out', clearProps: 'all' });
+        gsap.from(next.querySelectorAll(':scope > svg, :scope > h3, [data-done-ok] > *, [data-done-check]:not([hidden])'), {
+          autoAlpha: 0,
+          y: 18,
+          duration: 0.55,
+          stagger: 0.06,
+          ease: 'power3.out',
+          clearProps: 'all',
+        });
       },
     });
   }
@@ -201,7 +124,7 @@
     if (!window.gsap || reduceMotion()) return;
     const cx = origin.left + origin.width / 2;
     const cy = origin.top + origin.height / 2;
-    const colors = ['#E8C4B8', '#C96F4A', '#7A7D5C', '#E8C4B8', '#FBF8F3'];
+    const colors = ['#E8C4B8', '#C96F4A', '#7A7D5C', '#B79BD0', '#FBF8F3'];
     for (let i = 0; i < 40; i++) {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -229,22 +152,9 @@
     }
   }
 
-  function check(input, ok, message) {
-    if (ok) return true;
-    input.setAttribute('aria-invalid', 'true');
-    showError(message);
-    input.focus();
-    return false;
-  }
-
-  function setBusy(busy, button) {
-    form.querySelectorAll('button[type="submit"]').forEach((b) => (b.disabled = busy));
-    if (busy) {
-      button.dataset.label = button.textContent;
-      button.textContent = 'Sending...';
-    } else if (button.dataset.label) {
-      button.textContent = button.dataset.label;
-    }
+  function setBusy(busy) {
+    button.disabled = busy;
+    button.textContent = busy ? 'Saving...' : 'Join the waitlist';
   }
 
   function showError(message) {

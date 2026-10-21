@@ -11,11 +11,11 @@ Source of truth for copy, tone, and visuals: Google Doc "Partner Boot Camp - Bra
 No build step. Static HTML, CSS, and vanilla JS served by GitHub Pages from `main` (root).
 
 - `index.html`: the page, chapter by chapter
-- `welcome.html`: landing page after an invited partner clicks "Count me in"
+- `welcome.html`: landing page for partner invites sent before the email-only change
 - `css/styles.css`: tokens and layout
 - `js/early.js`: sets `js-motion` before first paint so the hero intro does not flash
 - `js/main.js`: motion (GSAP, ScrollTrigger, DrawSVG, SplitText, Lenis) and the bookshelf
-- `js/signup.js`: two-step Kit signup with the optional partner invite
+- `js/signup.js`: email-only Kit waitlist signup
 - `vendor/`: pinned GSAP 3.15.0 and Lenis 1.3.26 builds
 - `tools/og.html`: source for `assets/og.png` (regenerate with headless Chrome, see below)
 
@@ -39,12 +39,11 @@ Account: Partner Boot Camp (ryan.kolean+partnerbootcamp@gmail.com). The site pos
 
 How a signup flows:
 
-1. Step 1 collects first name and email. Nothing is sent yet.
-2. Step 2 is optional. "Send the invite" or "Just me for now" submits the waitlist form once, with `tags[]=waitlist` and, when inviting, the partner fields.
-3. When inviting, the partner is also submitted to the Partner Invite form with `tags[]=invited-partner`. Kit sends them one confirmation email, written as the invite. They join only if they click "Count me in", which lands on `welcome.html`.
-4. If someone leaves during step 2, a `sendBeacon` still saves their spot.
+1. The form asks for an email only. It posts to the waitlist form with `tags[]=waitlist`; Kit sends the welcome email right away (auto-confirm).
+2. If Kit's bot guard answers `status: "quarantined"`, the page shows an "Almost there" step with a link to Kit's quick check.
+3. After signing up, a "Share with your partner" button opens the share sheet (or copies the page link).
 
-The `partner_*` fields are symmetric: on each record they describe that person's partner. The invite email reads `{{ subscriber.partner_name }}` and `{{ subscriber.partner_note }}` from the invited partner's record.
+The Partner Invite form (10077317) and the partner_* fields are no longer used by the page. `welcome.html` stays up for invites sent before the change.
 
 ## Book covers
 

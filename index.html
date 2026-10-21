@@ -565,78 +565,35 @@
       <div class="chapter__head">
         <p class="chapter__num">The last page, for now</p>
         <h2 id="join-title">Sign up yourself and your partner.</h2>
-        <p class="lede">Free to join. We'll write when the first cohort opens, with a few small ideas worth trying before then.</p>
+        <p class="lede">Free to join, and all we need is your email. We'll write when the first cohort opens, with a few small ideas worth trying before then.</p>
       </div>
 
       <div class="signup" data-signup>
         <form class="signup__form" action="https://app.kit.com/forms/10077301/subscriptions" method="post" novalidate data-signup-form>
           <div class="signup__panel" data-panel="1">
-            <h3 class="signup__title">Start with you</h3>
-            <div class="field">
-              <label for="you-name">Your first name</label>
-              <input id="you-name" name="fields[first_name]" type="text" autocomplete="given-name" maxlength="60" required>
+            <label class="signup__label" for="you-email">Your email</label>
+            <div class="signup__row">
+              <input id="you-email" class="signup__input" name="email_address" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+              <button class="btn" type="submit" data-bloom>Join the waitlist</button>
             </div>
-            <div class="field">
-              <label for="you-email">Your email</label>
-              <input id="you-email" name="email_address" type="email" autocomplete="email" inputmode="email" required>
-            </div>
-            <div class="field field--trap" aria-hidden="true">
+            <div class="field--trap" aria-hidden="true">
               <label for="you-website">Leave this empty</label>
               <input id="you-website" name="website" type="text" tabindex="-1" autocomplete="off">
             </div>
-            <button class="btn" type="submit" data-bloom data-step-next>Save my spot</button>
             <p class="signup__fine">One welcome email from us, then the occasional note. Unsubscribe anytime.</p>
           </div>
 
-          <div class="signup__panel" data-panel="2" hidden>
-            <h3 class="signup__title">Bring your person along.</h3>
-            <p class="signup__sub">Because you're already great together. Totally optional.</p>
-            <div class="signup__cols">
-              <div class="signup__fields">
-                <div class="field">
-                  <label for="partner-name">Their first name</label>
-                  <input id="partner-name" name="partner_name" type="text" autocomplete="off" maxlength="60">
-                </div>
-                <div class="field">
-                  <label for="partner-email">Their email</label>
-                  <input id="partner-email" name="partner_email" type="email" autocomplete="off" inputmode="email">
-                </div>
-                <div class="field">
-                  <label for="partner-note">A short note for them <span class="field__hint">(optional)</span></label>
-                  <textarea id="partner-note" name="partner_note" rows="3" maxlength="240"></textarea>
-                  <div class="nudges" role="group" aria-label="Note ideas">
-                    <button type="button" class="nudge" data-nudge="Saw this and thought of us.">Saw this and thought of us.</button>
-                    <button type="button" class="nudge" data-nudge="Let's be the couple everyone asks for advice.">Let's be the couple everyone asks for advice.</button>
-                    <button type="button" class="nudge" data-nudge="You and me, leveling up together.">You and me, leveling up together.</button>
-                  </div>
-                </div>
-              </div>
-              <div class="invite-preview" aria-label="Preview of the invite email">
-                <p class="invite-preview__label">Here's what they'll get</p>
-                <div class="letter">
-                  <p class="letter__subject">Someone who loves you wants to do this together</p>
-                  <p>Hey <span data-preview="partner">there</span>, it's Krysta and Ryan.</p>
-                  <p>Someone who loves you wants to do this together. <span data-preview="you">Your partner</span> just saved you a spot in Partner Boot Camp, and would love for you to join them.</p>
-                  <p class="letter__note" data-preview-note hidden>They left you a note: "<span data-preview="note"></span>"</p>
-                  <p><span class="letter__btn">Count me in</span></p>
-                  <p class="letter__fine">If they don't say yes, we won't write to them again.</p>
-                </div>
-              </div>
-            </div>
-            <div class="signup__actions">
-              <button class="btn" type="submit" data-bloom data-action="invite">Send the invite</button>
-              <button class="btn btn--quiet" type="submit" data-action="solo">Just me for now</button>
-            </div>
-          </div>
-
-          <div class="signup__panel signup__done" data-panel="3" hidden tabindex="-1">
+          <div class="signup__panel signup__done" data-panel="2" hidden tabindex="-1">
             <svg class="signup__done-art art" viewBox="0 0 120 120" aria-hidden="true">
               <path class="art__accent" d="M60 100 C 30 80, 22 64, 22 52 a18 18 0 0 1 38 -6 a18 18 0 0 1 38 6 c0 12 -8 28 -38 48 z"/>
               <path d="M14 20 v12 M8 26 h12 M104 18 v12 M98 24 h12 M108 80 v8 M104 84 h8"/>
             </svg>
-            <h3 class="signup__title" data-done-title>You're in, friend.</h3>
-            <p data-done-solo>Check your inbox for a welcome note from Krysta and Ryan. When you're ready to bring your person along, come back and send the invite.</p>
-            <p data-done-invite hidden>Check your inbox for a welcome note from Krysta and Ryan. We also sent <span data-done-partner>your partner</span> a warm invite. They're in as soon as they say yes.</p>
+            <h3 class="signup__title" data-done-title>You're in.</h3>
+            <div data-done-ok>
+              <p>Check your inbox for a welcome note from Krysta and Ryan.</p>
+              <p>Want your partner on the list too? Send them this page.</p>
+              <button class="btn btn--quiet" type="button" data-share>Share with your partner</button>
+            </div>
             <div class="signup__check" data-done-check hidden>
               <p><strong>One more step.</strong> Our email provider wants a quick check that you're a person. It opens in a new tab and takes a few seconds.</p>
               <div class="signup__check-links" data-check-links></div>
@@ -651,7 +608,7 @@
 
   <footer class="colophon">
     <p>Partner Boot Camp is a project by Krysta and Ryan, built with Summit Software Solutions in Oak Park, Michigan.</p>
-    <p>We only use your partner's email to send one invite. If they don't say yes, we won't write to them again.</p>
+    <p>We only use your email to send Partner Boot Camp updates. Unsubscribe anytime.</p>
   </footer>
 </body>
 </html>
