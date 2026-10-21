@@ -1,6 +1,6 @@
 # Partner Boot Camp
 
-Storybook landing page and waitlist for Partner Boot Camp, an inclusive couples program by Ryan and Krysta (Summit Software Solutions).
+Storybook landing page and waitlist for Partner Boot Camp, an inclusive couples program by Krysta and Ryan (Summit Software Solutions).
 
 Live: https://ryankolean.github.io/partner-boot-camp/
 
