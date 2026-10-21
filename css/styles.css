@@ -580,69 +580,230 @@ a { color: inherit; }
   .philosophy__grid { grid-template-columns: 1fr 1.1fr; }
 }
 
-/* Reading list */
+/* Reading list: 3D books. Spine faces the reader; the cover sits on the left side and turns forward. */
+.reading { overflow-x: clip; }
 .shelf {
+  --u: clamp(0.6rem, 2.6vw, 1rem);
+  --oswald: "Oswald", "Arial Narrow", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   max-width: var(--wide);
   margin: 0 auto;
 }
 .shelf__books {
+  position: relative;
   list-style: none;
   margin: 0;
-  padding: 0 0.5rem;
+  padding: calc(var(--u) * 3) 0 0;
   display: flex;
   align-items: flex-end;
-  gap: 0.35rem;
-  min-height: 18rem;
-  overflow-x: auto;
-  scrollbar-width: none;
+  gap: calc(var(--u) * 0.2);
 }
-.shelf__books::-webkit-scrollbar { display: none; }
-.shelf__books li { flex: 0 0 auto; }
+.slot { position: relative; flex: 0 0 auto; font-size: var(--u); }
+.slot.is-closing { z-index: 2; }
+.slot.is-active { z-index: 3; }
+.slot--8080 { --t: 3.1; --h: 15.6; }
+.slot--nstd { --t: 3.3; --h: 15.8; }
+.slot--uh { --t: 3.4; --h: 15.8; }
+.slot--mic { --t: 2.9; --h: 13.2; }
+.slot--aoh { --t: 3.6; --h: 16.6; }
+.slot--eight { --t: 3; --h: 15.2; }
+.slot--let { --t: 3.6; --h: 15.8; }
+.slot--perry { --t: 3.2; --h: 13.4; }
+
 .book {
-  --h: 15rem;
+  --tw: calc(var(--t) * 1em);
+  --d: calc(var(--h) * 0.68em);
+  position: relative;
+  display: block;
+  width: var(--tw);
+  height: calc(var(--h) * 1em);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50% calc(var(--d) / -2);
+}
+.book:focus-visible { outline: none; }
+.book:focus-visible .book__spine { outline: 3px solid var(--terracotta); outline-offset: 3px; }
+
+.book__spine,
+.book__cover {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0.2em 0.2em 0.1em 0.1em;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.book__spine {
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  writing-mode: vertical-rl;
+  padding: 0.9em 0;
+  box-shadow: inset -0.45em 0 0.5em -0.3em rgba(43, 37, 34, 0.3), inset 0.3em 0 0.3em -0.25em rgba(255, 255, 255, 0.4);
+}
+.book__cover {
+  left: calc((var(--tw) - var(--d)) / 2);
+  width: var(--d);
+  display: flex;
+  flex-direction: column;
+  padding: 0.9em 0.85em;
+  transform: translateZ(calc(var(--d) / -2)) rotateY(-90deg) translateZ(calc(var(--tw) / 2));
+  box-shadow: inset 0.7em 0 0.6em -0.5em rgba(43, 37, 34, 0.35), 0 1.2em 2em -1em rgba(43, 37, 34, 0.45);
+  text-align: center;
+}
+.book.is-open-fallback { transform: translateZ(calc(var(--d) * 0.8)) rotateY(90deg); transition: transform 1.1s cubic-bezier(0.65, 0, 0.35, 1); }
+
+.sp-title, .sp-author { white-space: nowrap; line-height: 1; }
+.sp-title { font: 700 1em/1 var(--oswald); text-transform: uppercase; letter-spacing: 0.02em; }
+.sp-author { font: 600 0.72em/1 var(--oswald); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.rainbow {
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.book__spine .rainbow { background-image: linear-gradient(180deg, #E8483B, #F08A3E, #F2C14E, #6DBE6B, #3E9BD6); }
+.book__cover .rainbow { background-image: linear-gradient(90deg, #E8483B, #F08A3E, #F2C14E, #6DBE6B, #3E9BD6); }
+
+/* The 80/80 Marriage */
+.slot--8080 .book__spine, .slot--8080 .book__cover { background: #F5F1E8; color: #1E1B19; }
+.slot--8080 .sp-title { font-size: 1.1em; }
+.slot--8080 .sp-author { color: #D9472E; }
+.slot--8080 .cv-row { display: flex; justify-content: space-between; font: 600 0.6em/1.1 var(--oswald); text-transform: uppercase; color: #D9472E; }
+.slot--8080 .cv-the { margin-top: 0.4em; font: 700 2.2em/1 var(--oswald); text-transform: uppercase; }
+.slot--8080 .cv-num { font: 700 3.3em/0.95 var(--oswald); }
+.slot--8080 .cv-word { font: 700 1.9em/1 var(--oswald); text-transform: uppercase; }
+.slot--8080 .cv-sub { margin-top: auto; font: 600 0.6em/1.25 var(--oswald); text-transform: uppercase; color: #3E7FC1; letter-spacing: 0.04em; }
+
+/* Never Split the Difference */
+.slot--nstd .book__spine, .slot--nstd .book__cover { background: #F5CF1D; color: #141414; }
+.slot--nstd .book__spine { justify-content: flex-start; padding-top: 0.8em; }
+.slot--nstd .sp-title { writing-mode: horizontal-tb; white-space: normal; font-size: 0.6em; line-height: 1.02; text-align: center; }
+.slot--nstd .sp-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28%;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(2.2rem, 6.5vw, 4.25rem);
-  height: var(--h);
-  padding: 0.75rem 0;
-  border: 0;
-  border-radius: 0.35rem 0.35rem 0.15rem 0.15rem;
-  background: var(--olive);
-  color: var(--paper);
-  font: 500 clamp(0.75rem, 1.4vw, 0.95rem)/1.1 var(--serif);
-  font-variation-settings: "SOFT" 100;
-  cursor: pointer;
-  box-shadow: inset -6px 0 0 rgba(43, 37, 34, 0.12), inset 3px 0 0 rgba(251, 248, 243, 0.18);
-  transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+  writing-mode: horizontal-tb;
+  background: #D42A2A;
+  clip-path: polygon(0 7%, 14% 1%, 28% 6%, 44% 0, 60% 6%, 76% 1%, 90% 6%, 100% 2%, 100% 100%, 0 100%);
 }
-.book span {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  max-height: 100%;
-  overflow: hidden;
-  text-align: center;
+.slot--nstd .sp-author { white-space: normal; text-align: center; font-size: 0.55em; color: #FFF4D6; line-height: 1.05; }
+.slot--nstd .cv-kicker { font: 600 0.5em/1.2 var(--oswald); text-transform: uppercase; letter-spacing: 0.08em; }
+.slot--nstd .cv-title { margin-top: 0.5em; font: 700 1.75em/0.95 var(--oswald); text-transform: uppercase; }
+.slot--nstd .cv-band {
+  margin: auto -1em 0;
+  padding: 1em 1.1em 0.6em;
+  background: #D42A2A;
+  color: #FFF8E6;
+  font: 700 0.72em/1.15 var(--oswald);
+  text-transform: uppercase;
+  clip-path: polygon(0 12%, 10% 3%, 22% 10%, 36% 0, 50% 9%, 64% 2%, 78% 10%, 90% 2%, 100% 8%, 100% 100%, 0 100%);
 }
-.book:hover, .book:focus-visible, .book[aria-pressed="true"] { transform: translateY(-1.25rem); }
-.book--tall { --h: 17rem; }
-.book--short { --h: 13rem; }
-.book--olive { background: var(--olive-deep); }
-.book--terracotta { background: var(--terracotta); color: var(--ink); }
-.book--blush { background: var(--blush); color: var(--ink); }
-.book--ink { background: var(--ink); }
-.book--paper { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
-.book--elective { background-image: repeating-linear-gradient(0deg, transparent 0 14px, rgba(43,37,34,.08) 14px 16px); }
+.slot--nstd .cv-author { margin: 0 -0.85em -0.9em; padding: 0.15em 0 0.8em; background: #D42A2A; font: 700 1.2em/1 var(--oswald); text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* Unreasonable Hospitality */
+.slot--uh .book__spine, .slot--uh .book__cover { background: #F4E53A; color: #1F2B5C; }
+.slot--uh .sp-title { font-size: 0.95em; line-height: 1.02; white-space: normal; }
+.slot--uh .sp-white, .slot--uh .cv-white { color: #FFFFFF; }
+.slot--uh .cv-author { align-self: flex-end; font: 700 0.75em/1 var(--oswald); text-transform: uppercase; text-align: right; }
+.slot--uh .cv-navy, .slot--uh .cv-white { font: 700 2.75em/0.86 var(--oswald); text-transform: uppercase; text-align: left; letter-spacing: -0.01em; }
+.slot--uh .cv-navy { margin-top: 0.15em; }
+
+/* Mating in Captivity */
+.slot--mic .book__spine, .slot--mic .book__cover { background: #EFE6D3; color: #1F2E4F; }
+.slot--mic .sp-match { display: block; width: 0.32em; height: 1.7em; border-radius: 0.2em; background: linear-gradient(#C8352B 0 26%, #D8B27A 26%); }
+.slot--mic .sp-title { padding: 0.45em 0.3em; background: #1F2E4F; color: #F3EBDD; font-weight: 600; font-size: 0.82em; line-height: 1.05; white-space: normal; }
+.slot--mic .sp-author { font-size: 0.62em; }
+.slot--mic .cv-matches { display: flex; justify-content: center; gap: 0.38em; margin-top: 0.4em; }
+.slot--mic .cv-matches i { display: block; width: 0.42em; height: 2.4em; border-radius: 0.22em 0.22em 0.05em 0.05em; background: linear-gradient(#C8352B 0 22%, #DDB98A 22%); }
+.slot--mic .cv-box { margin: 0.8em -0.2em 0; padding: 0.6em 0.5em; background: #1F2E4F; }
+.slot--mic .cv-title { color: #F3EBDD; font: 600 1.4em/1.02 var(--oswald); text-transform: uppercase; letter-spacing: 0.03em; }
+.slot--mic .cv-flame { width: 1.5em; height: 2.3em; margin: 1em auto 0; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: linear-gradient(#F5B23A, #E2552D); transform: rotate(-6deg); }
+.slot--mic .cv-author { margin-top: auto; padding: 0.45em; background: #1F2E4F; color: #F3EBDD; font: 600 0.9em/1 var(--oswald); text-transform: uppercase; letter-spacing: 0.12em; }
+
+/* Atlas of the Heart */
+.slot--aoh .book__spine, .slot--aoh .book__cover { background: #A3202C; color: #E9CF95; }
+.slot--aoh .sp-title { font: 500 0.74em/1 var(--serif); text-transform: uppercase; letter-spacing: 0.06em; }
+.slot--aoh .sp-author { font: 500 0.7em/1 var(--serif); text-transform: none; letter-spacing: 0.02em; }
+.slot--aoh .cv-author { font: 500 1.3em/1 var(--serif); }
+.slot--aoh .cv-heart { width: 6em; margin: 0.8em auto 0.6em; fill: none; stroke: #E9CF95; stroke-width: 2; stroke-linecap: round; }
+.slot--aoh .cv-heart circle { stroke: #9DC08B; }
+.slot--aoh .cv-title { font: 500 2em/0.95 var(--serif); text-transform: uppercase; letter-spacing: 0.04em; }
+.slot--aoh .cv-title small { display: block; margin: 0.3em 0; font-size: 0.4em; letter-spacing: 0.25em; }
+
+/* Eight Dates */
+.slot--eight .book__spine, .slot--eight .book__cover { background-color: #F6F3EA; color: #1C1C1C; }
+.slot--eight .book__spine { background-image: linear-gradient(90deg, transparent 0 16%, #CFE3B8 16% 30%, transparent 30% 70%, #BCD9E6 70% 84%, transparent 84%); }
+.slot--eight .sp-title { font: 700 1.65em/1 "Caveat", cursive; text-transform: none; letter-spacing: 0; }
+.slot--eight .cv-ribbons { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 9; }
+.slot--eight .cv-ribbons .r1 { stroke: #CFE3B8; }
+.slot--eight .cv-ribbons .r2 { stroke: #BCD9E6; }
+.slot--eight .cv-kicker, .slot--eight .cv-title, .slot--eight .cv-author { position: relative; }
+.slot--eight .cv-kicker { font: 600 0.52em/1.25 var(--oswald); text-transform: uppercase; letter-spacing: 0.1em; }
+.slot--eight .cv-title { margin: auto 0; font: 700 3.9em/0.8 "Caveat", cursive; transform: rotate(-4deg); }
+.slot--eight .cv-author { font: 600 0.5em/1.35 var(--oswald); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* The Let Them Theory */
+.slot--let .book__spine, .slot--let .book__cover { background: #1D9A5C; color: #FFFFFF; }
+.slot--let .sp-yellow, .slot--let .cv-theory { color: #F4EC9B; }
+.slot--let .sp-author { font: 700 0.72em/1 var(--sans); text-transform: none; letter-spacing: 0; color: #F7E36B; }
+.slot--let .cv-kicker { font: 600 0.5em/1.25 var(--sans); }
+.slot--let .cv-the { margin-top: 0.5em; font: 700 1.5em/1 var(--oswald); text-transform: uppercase; }
+.slot--let .cv-big { font: 700 3.8em/0.86 var(--oswald); text-transform: uppercase; }
+.slot--let .cv-theory { font: 700 1.5em/1.2 var(--oswald); text-transform: uppercase; letter-spacing: 0.14em; }
+.slot--let .cv-author { margin-top: auto; font: 700 1.2em/1 var(--sans); color: #F7E36B; }
+
+/* The Book You Wish Your Parents Had Read */
+.slot--perry .book__spine { background: #1F4FA6; color: #FFFFFF; }
+.slot--perry .book__cover { background: linear-gradient(90deg, #1F4FA6 0 7%, #F06A2A 7%); color: #FFFFFF; padding-left: 1.3em; text-align: left; }
+.slot--perry .sp-title { inline-size: 10.8em; white-space: normal; font: 500 0.74em/1.05 var(--serif); text-transform: none; letter-spacing: 0; }
+.slot--perry .sp-author { font: 500 0.62em/1 var(--serif); text-transform: none; letter-spacing: 0; color: #F6E3A0; }
+.slot--perry .cv-title { font: 500 1.65em/1.02 var(--serif); }
+.slot--perry .cv-sub { margin-top: 0.4em; font: 400 0.8em/1.15 var(--serif); color: #FBE7A6; }
+.slot--perry .cv-author { margin-top: auto; font: 500 1.2em/1 var(--serif); color: #FBE7A6; }
+
+/* Vase of lilacs at the end of the shelf */
+.slot--vase { --t: 5.2; }
+.vase { display: block; width: 5.2em; height: auto; overflow: visible; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.vase__stem { stroke: var(--olive); stroke-width: 2; }
+.vase__body { stroke: var(--olive); stroke-width: 2.4; }
+.vase__lilac circle { stroke: none; fill: #B79BD0; }
+.vase__lilac circle:nth-child(3n) { fill: #D8C6E6; }
+.vase__lilac circle:nth-child(3n + 1) { fill: #A88CC4; }
+
+/* Hand-drawn shelf; JS sizes the path to the row of books */
 .shelf__plank {
-  height: 0.9rem;
-  margin-top: -0.1rem;
-  border-radius: 0.3rem;
-  background: var(--olive-deep);
-  box-shadow: 0 14px 24px -16px rgba(43, 37, 34, 0.6);
+  display: block;
+  width: 100%;
+  height: 4rem;
+  margin-top: -3px;
+  overflow: visible;
+  fill: none;
+  stroke: var(--olive);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .shelf__note {
-  max-width: var(--measure);
-  margin-top: 2rem;
+  width: min(100%, var(--measure));
+  margin-top: 1.5rem;
   min-height: 7.5rem;
+  text-align: center;
 }
 .shelf__note-title {
   font-family: var(--serif);

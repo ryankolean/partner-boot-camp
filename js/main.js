@@ -284,16 +284,25 @@
       .from('[data-result]', { autoAlpha: 0, scale: 0.6, rotation: -8, duration: 0.8, ease: 'back.out(2)' }, '-=0.35');
   }
 
+  // Books slide in from beyond the right edge as the shelf scrolls into view, overshooting softly into place.
   function shelfArrival() {
-    gsap.from('[data-book]', {
-      yPercent: -130,
-      rotation: () => gsap.utils.random(-14, 14),
-      autoAlpha: 0,
-      duration: 0.9,
-      stagger: 0.07,
-      ease: 'bounce.out',
-      clearProps: 'transform,opacity,visibility',
-      scrollTrigger: { trigger: '.shelf', start: 'top 75%' },
+    const row = document.querySelector('.shelf__books');
+    if (!row) return;
+    gsap.from(row.querySelectorAll('.slot'), {
+      x: (i, el) => document.documentElement.clientWidth - (row.getBoundingClientRect().left + el.offsetLeft) + 40,
+      rotation: 6,
+      transformOrigin: '50% 100%',
+      ease: 'back.out(1.4)',
+      stagger: 0.12,
+      scrollTrigger: { trigger: '.shelf', start: 'top 95%', end: 'top 35%', scrub: 1.4, invalidateOnRefresh: true },
+    });
+    gsap.from('[data-plank] path', {
+      drawSVG: 0,
+      duration: 1.6,
+      stagger: 0.3,
+      ease: 'power2.inOut',
+      clearProps: 'strokeDasharray,strokeDashoffset',
+      scrollTrigger: { trigger: '.shelf', start: 'top 85%' },
     });
   }
 
@@ -316,25 +325,155 @@
     return Array.from({ length: count }, (_, i) => (i % 3 === 0 ? cluster : single)).join('');
   }
 
-  // Reading list: hovering, focusing, or tapping a spine shows its note.
+  // Reading list: hover, focus, or tap a spine and the book slides off the shelf and turns to its cover.
   function initShelf() {
-    const books = [...document.querySelectorAll('[data-book]')];
-    const note = document.querySelector('[data-book-note]');
-    if (!books.length || !note) return;
-    const show = (book) => {
-      books.forEach((b) => b.setAttribute('aria-pressed', String(b === book)));
-      const [title, author, body] = note.children;
-      title.textContent = book.dataset.title;
-      author.textContent = book.dataset.author;
-      body.textContent = book.dataset.note;
+    const shelf = document.querySelector('[data-shelf-root]');
+    if (!shelf) return;
+    const row = shelf.querySelector('.shelf__books');
+    const slots = [...row.querySelectorAll('.slot:not(.slot--vase)')];
+    const [noteTitle, noteAuthor, noteBody] = shelf.querySelector('[data-book-note]').children;
+    const animated = !!window.gsap;
+    const timelines = new Map();
+    let active = null;
+    let hoverTimer = 0;
+    let leaveTimer = 0;
+    let lastInput = 'mouse';
+
+    const geometry = (slot) => {
+      const book = slot.querySelector('.book');
+      const t = book.offsetWidth;
+      const h = book.offsetHeight;
+      const d = h * 0.68;
+      const center = row.getBoundingClientRect().left + slot.offsetLeft + t / 2;
+      const edge = document.documentElement.clientWidth;
+      let shift = 0;
+      if (center - d / 2 < 12) shift = 12 - (center - d / 2);
+      if (center + d / 2 > edge - 12) shift = edge - 12 - (center + d / 2);
+      return { h, d, shift };
     };
-    books.forEach((book) => {
-      book.addEventListener('click', () => show(book));
-      book.addEventListener('focus', () => show(book));
-      book.addEventListener('pointerenter', (e) => {
-        if (e.pointerType === 'mouse') show(book);
+
+    const timelineFor = (slot) => {
+      if (timelines.has(slot)) return timelines.get(slot);
+      const book = slot.querySelector('.book');
+      gsap.set(book, { transformPerspective: 1400, transformOrigin: () => `50% 50% ${-geometry(slot).d / 2}px` });
+      const tl = gsap.timeline({ paused: true, defaults: { ease: 'power2.inOut' } })
+        .to(book, { z: () => geometry(slot).d * 0.8, y: () => -geometry(slot).h * 0.05, duration: 0.6 })
+        .to(book, { rotationY: 90, x: () => geometry(slot).shift, duration: 0.85, ease: 'power3.inOut' }, 0.3)
+        .to(book, { y: () => -geometry(slot).h * 0.1, duration: 0.65, ease: 'sine.inOut' }, 0.5);
+      timelines.set(slot, tl);
+      return tl;
+    };
+
+    const showNote = (book) => {
+      noteTitle.textContent = book.dataset.title;
+      noteAuthor.textContent = book.dataset.author;
+      noteBody.textContent = book.dataset.note;
+    };
+
+    const open = (slot) => {
+      if (active === slot) return;
+      if (active) close(active);
+      active = slot;
+      const book = slot.querySelector('.book');
+      book.setAttribute('aria-pressed', 'true');
+      slot.classList.remove('is-closing');
+      slot.classList.add('is-active');
+      showNote(book);
+      if (!animated) return book.classList.add('is-open-fallback');
+      const tl = timelineFor(slot);
+      tl.eventCallback('onReverseComplete', null);
+      if (reduceQuery.matches) tl.progress(1);
+      else tl.play();
+    };
+
+    const close = (slot) => {
+      const book = slot.querySelector('.book');
+      book.setAttribute('aria-pressed', 'false');
+      if (active === slot) active = null;
+      slot.classList.remove('is-active');
+      if (!animated) return book.classList.remove('is-open-fallback');
+      slot.classList.add('is-closing');
+      const tl = timelineFor(slot);
+      const settle = () => slot.classList.remove('is-closing');
+      if (reduceQuery.matches) {
+        tl.progress(0);
+        settle();
+      } else {
+        tl.eventCallback('onReverseComplete', settle);
+        tl.reverse();
+      }
+    };
+
+    slots.forEach((slot) => {
+      const book = slot.querySelector('.book');
+      slot.addEventListener('pointerenter', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        clearTimeout(leaveTimer);
+        clearTimeout(hoverTimer);
+        hoverTimer = setTimeout(() => open(slot), 90);
+      });
+      slot.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse') clearTimeout(hoverTimer);
+      });
+      book.addEventListener('pointerdown', (e) => (lastInput = e.pointerType));
+      book.addEventListener('keydown', () => (lastInput = 'key'));
+      book.addEventListener('click', () => {
+        if (lastInput !== 'mouse' && active === slot) close(slot);
+        else open(slot);
+      });
+      book.addEventListener('focus', () => {
+        if (lastInput === 'key') open(slot);
       });
     });
-    show(books[0]);
+
+    row.addEventListener('pointerleave', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      clearTimeout(hoverTimer);
+      leaveTimer = setTimeout(() => active && close(active), 220);
+    });
+    shelf.addEventListener('focusout', (e) => {
+      if (active && !shelf.contains(e.relatedTarget)) close(active);
+    });
+    document.addEventListener('keydown', (e) => {
+      lastInput = 'key';
+      if (e.key === 'Escape' && active) close(active);
+    });
+    document.addEventListener('pointerdown', (e) => {
+      if (active && !shelf.contains(e.target)) close(active);
+    });
+
+    buildPlank();
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        buildPlank();
+        timelines.forEach((tl) => tl.invalidate());
+      }, 150);
+    });
+  }
+
+  // A hand-drawn shelf sized to the row of books, with curled brackets underneath.
+  function buildPlank() {
+    const svg = document.querySelector('[data-plank]');
+    const row = document.querySelector('.shelf__books');
+    if (!svg || !row) return;
+    const u = parseFloat(getComputedStyle(row.querySelector('.slot')).fontSize);
+    const w = Math.round(Math.min(row.offsetWidth + u * 4, document.documentElement.clientWidth - 8));
+    svg.style.width = `${w}px`;
+    const board = [
+      `M 2 3 C ${w * 0.3} 1.5, ${w * 0.65} 5, ${w - 2} 3`,
+      `M 7 15 C ${w * 0.35} 16.5, ${w * 0.7} 13, ${w - 7} 15`,
+      `M 2 3 C -1 7, 2 13, 7 15`,
+      `M ${w - 2} 3 C ${w + 1} 7, ${w - 2} 13, ${w - 7} 15`,
+    ].join(' ');
+    const a = w * 0.16;
+    const b = w * 0.84;
+    const brackets = [
+      `M ${a} 15 C ${a} 32, ${a - 5} 44, ${a - 20} 50 C ${a - 29} 53, ${a - 33} 45, ${a - 26} 41`,
+      `M ${b} 15 C ${b} 32, ${b + 5} 44, ${b + 20} 50 C ${b + 29} 53, ${b + 33} 45, ${b + 26} 41`,
+    ].join(' ');
+    svg.querySelector('[data-plank-board]').setAttribute('d', board);
+    svg.querySelector('[data-plank-brackets]').setAttribute('d', brackets);
   }
 })();

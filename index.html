@@ -17,7 +17,7 @@
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=DM+Sans:opsz,wght@9..40,400..700&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..700,0..100,0..1;1,9..144,300..700,0..100,0..1&family=Oswald:wght@500..700&display=swap">
   <link rel="stylesheet" href="vendor/lenis.css">
   <link rel="stylesheet" href="css/styles.css">
   <script src="js/early.js"></script>
@@ -407,24 +407,141 @@
       <div class="chapter__head">
         <p class="chapter__num">Chapter 5</p>
         <h2 id="reading-title">The reading list</h2>
-        <p class="lede">The shelf behind the program. Pull one out.</p>
+        <p class="lede">The shelf behind the program. Pull one out and have a look.</p>
       </div>
-      <div class="shelf">
+      <div class="shelf" data-shelf-root>
         <ul class="shelf__books">
-          <li><button class="book book--olive" type="button" aria-pressed="false" data-book data-title="The 80/80 Marriage" data-author="Nate and Kaley Klemp" data-note="The backbone of the program. Give more than you expect to receive."><span>The 80/80 Marriage</span></button></li>
-          <li><button class="book book--terracotta book--tall" type="button" aria-pressed="false" data-book data-title="Never Split the Difference" data-author="Chris Voss" data-note="Ryan's number one pick. Listening, empathy, and how to really hear what someone means."><span>Never Split the Difference</span></button></li>
-          <li><button class="book book--blush" type="button" aria-pressed="false" data-book data-title="Unreasonable Hospitality" data-author="Will Guidara" data-note="What happens when you treat the people you love like guests at the best table in town."><span>Unreasonable Hospitality</span></button></li>
-          <li><button class="book book--ink book--short" type="button" aria-pressed="false" data-book data-title="Mating in Captivity" data-author="Esther Perel" data-note="Keeping desire alive inside a long, safe, happy relationship."><span>Mating in Captivity</span></button></li>
-          <li><button class="book book--paper book--tall" type="button" aria-pressed="false" data-book data-title="Atlas of the Heart" data-author="Brené Brown" data-note="Words for what you are feeling, so you can say it out loud. Plus the rest of Brené Brown's shelf."><span>Atlas of the Heart</span></button></li>
-          <li><button class="book book--olive book--short" type="button" aria-pressed="false" data-book data-title="Eight Dates" data-author="John and Julie Gottman" data-note="Eight conversations worth having, one date at a time."><span>Eight Dates</span></button></li>
-          <li><button class="book book--terracotta" type="button" aria-pressed="false" data-book data-title="The Let Them Theory" data-author="Mel Robbins" data-note="Less managing each other, more letting each other be."><span>The Let Them Theory</span></button></li>
-          <li><button class="book book--blush book--tall book--elective" type="button" aria-pressed="false" data-book data-title="The Book You Wish Your Parents Had Read" data-author="Philippa Perry" data-note="An elective, for partners expecting a baby."><span>The Book You Wish Your Parents Had Read</span></button></li>
+          <li class="slot slot--8080">
+            <button class="book" type="button" aria-pressed="false" aria-label="The 80/80 Marriage by Nate and Kaley Klemp" data-book data-title="The 80/80 Marriage" data-author="Nate and Kaley Klemp" data-note="The backbone of the program. Give more than you expect to receive.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">The <span class="rainbow">80/80</span> Marriage</span>
+                <span class="sp-author">Klemp</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-row"><span>Nate Klemp, PhD</span><span>Kaley Klemp</span></span>
+                <span class="cv-the">The</span>
+                <span class="cv-num rainbow">80/80</span>
+                <span class="cv-word">Marriage</span>
+                <span class="cv-sub">A new model for a happier, stronger relationship</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--nstd">
+            <button class="book" type="button" aria-pressed="false" aria-label="Never Split the Difference by Chris Voss" data-book data-title="Never Split the Difference" data-author="Chris Voss" data-note="Ryan's number one pick. Listening, empathy, and how to really hear what someone means.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">Never<br>Split the<br>Difference</span>
+                <span class="sp-band"><span class="sp-author">Chris<br>Voss</span></span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-kicker">New York Times bestseller</span>
+                <span class="cv-title">Never<br>Split the<br>Difference</span>
+                <span class="cv-band"><span>Negotiating as if your life depended on it</span></span>
+                <span class="cv-author">Chris Voss</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--uh">
+            <button class="book" type="button" aria-pressed="false" aria-label="Unreasonable Hospitality by Will Guidara" data-book data-title="Unreasonable Hospitality" data-author="Will Guidara" data-note="What happens when you treat the people you love like guests at the best table in town.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">Unreasonable<br><span class="sp-white">Hospitality</span></span>
+                <span class="sp-author">Will Guidara</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-author">Will<br>Guidara</span>
+                <span class="cv-navy">Un<br>reason<br>able</span>
+                <span class="cv-white">Hospi<br>tality</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--mic">
+            <button class="book" type="button" aria-pressed="false" aria-label="Mating in Captivity by Esther Perel" data-book data-title="Mating in Captivity" data-author="Esther Perel" data-note="Keeping desire alive inside a long, safe, happy relationship.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-match"></span>
+                <span class="sp-title">Mating in<br>Captivity</span>
+                <span class="sp-author">Esther Perel</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-matches"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+                <span class="cv-box"><span class="cv-title">Mating in Captivity</span></span>
+                <span class="cv-flame"></span>
+                <span class="cv-author">Esther Perel</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--aoh">
+            <button class="book" type="button" aria-pressed="false" aria-label="Atlas of the Heart by Brené Brown" data-book data-title="Atlas of the Heart" data-author="Brené Brown" data-note="Words for what you are feeling, so you can say it out loud. Plus the rest of Brené Brown's shelf.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-author">Brené Brown</span>
+                <span class="sp-title">Atlas of the Heart</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-author">Brené Brown</span>
+                <svg class="cv-heart" viewBox="0 0 60 56"><path d="M30 52 C 12 40, 4 28, 6 17 C 8 6, 22 2, 30 14 C 38 2, 52 6, 54 17 C 56 28, 48 40, 30 52 Z"/><path d="M30 14 C 28 22, 30 30, 26 40 M20 22 c4 2 6 6 6 10 M38 20 c-3 4 -4 8 -3 12"/><circle cx="18" cy="12" r="3"/><circle cx="44" cy="10" r="3"/><circle cx="50" cy="22" r="2.5"/></svg>
+                <span class="cv-title">Atlas<small>of the</small>Heart</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--eight">
+            <button class="book" type="button" aria-pressed="false" aria-label="Eight Dates by John and Julie Gottman" data-book data-title="Eight Dates" data-author="John and Julie Gottman" data-note="Eight conversations worth having, one date at a time.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">Eight Dates</span>
+                <span class="sp-author">Gottman</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <svg class="cv-ribbons" viewBox="0 0 100 150" preserveAspectRatio="none"><path class="r1" d="M30 0 C 30 40, 75 50, 75 75 C 75 100, 30 110, 30 150"/><path class="r2" d="M70 0 C 70 40, 25 50, 25 75 C 25 100, 70 110, 70 150"/></svg>
+                <span class="cv-kicker">Essential conversations for a lifetime of love</span>
+                <span class="cv-title">Eight<br>Dates</span>
+                <span class="cv-author">John Gottman, PhD<br>Julie Schwartz Gottman, PhD</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--let">
+            <button class="book" type="button" aria-pressed="false" aria-label="The Let Them Theory by Mel Robbins" data-book data-title="The Let Them Theory" data-author="Mel Robbins" data-note="Less managing each other, more letting each other be.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">The Let Them <span class="sp-yellow">Theory</span></span>
+                <span class="sp-author">Mel Robbins</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-kicker">A life-changing tool millions of people can't stop talking about</span>
+                <span class="cv-the">The</span>
+                <span class="cv-big">Let<br>Them</span>
+                <span class="cv-theory">Theory</span>
+                <span class="cv-author">Mel Robbins</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--perry">
+            <button class="book" type="button" aria-pressed="false" aria-label="The Book You Wish Your Parents Had Read by Philippa Perry, an elective" data-book data-title="The Book You Wish Your Parents Had Read" data-author="Philippa Perry" data-note="An elective, for partners expecting a baby.">
+              <span class="book__spine" aria-hidden="true">
+                <span class="sp-title">The Book You Wish Your Parents Had Read</span>
+                <span class="sp-author">Philippa Perry</span>
+              </span>
+              <span class="book__cover" aria-hidden="true">
+                <span class="cv-title">The Book You Wish Your Parents Had Read</span>
+                <span class="cv-sub">(and Your Children Will Be Glad That You Did)</span>
+                <span class="cv-author">Philippa Perry</span>
+              </span>
+            </button>
+          </li>
+          <li class="slot slot--vase" aria-hidden="true">
+            <svg class="vase" viewBox="0 0 80 130">
+              <path class="vase__stem" d="M40 78 C 38 60, 30 48, 22 34 M40 78 C 42 58, 50 46, 58 30 M40 78 C 40 60, 40 46, 40 24"/>
+              <path class="vase__stem" d="M31 52 c-8 -2 -12 -8 -12 -14 c7 1 11 7 12 14 z M49 50 c8 -3 11 -9 10 -15 c-7 2 -10 8 -10 15 z"/>
+              <g class="vase__lilac">
+                <circle cx="22" cy="30" r="3.4"/><circle cx="17" cy="25" r="3"/><circle cx="25" cy="23" r="3.2"/><circle cx="19" cy="18" r="2.8"/><circle cx="24" cy="15" r="2.5"/><circle cx="20" cy="10" r="2.2"/>
+                <circle cx="40" cy="20" r="3.4"/><circle cx="35" cy="15" r="3"/><circle cx="44" cy="14" r="3.2"/><circle cx="39" cy="9" r="2.8"/><circle cx="42" cy="4" r="2.2"/>
+                <circle cx="58" cy="26" r="3.4"/><circle cx="54" cy="21" r="3"/><circle cx="62" cy="20" r="3.2"/><circle cx="57" cy="14" r="2.8"/><circle cx="61" cy="9" r="2.2"/>
+              </g>
+              <path class="vase__body" d="M28 126 h24 c2 -14 7 -24 7 -36 c0 -9 -6 -12 -6 -14 h-26 c0 2 -6 5 -6 14 c0 12 5 22 7 36 z"/>
+              <path class="vase__body" d="M27 76 h26"/>
+            </svg>
+          </li>
         </ul>
-        <div class="shelf__plank" aria-hidden="true"></div>
+        <svg class="shelf__plank" aria-hidden="true" data-plank><path data-plank-board d=""/><path data-plank-brackets d=""/></svg>
         <div class="shelf__note" aria-live="polite" data-book-note>
-          <p class="shelf__note-title">The 80/80 Marriage</p>
-          <p class="shelf__note-author">Nate and Kaley Klemp</p>
-          <p>The backbone of the program. Give more than you expect to receive.</p>
+          <p class="shelf__note-title">Hover a book to pull it off the shelf.</p>
+          <p class="shelf__note-author">Or tap one on your phone.</p>
+          <p></p>
         </div>
       </div>
     </section>
