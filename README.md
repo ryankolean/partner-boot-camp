@@ -46,6 +46,10 @@ How a signup flows:
 
 The `partner_*` fields are symmetric: on each record they describe that person's partner. The invite email reads `{{ subscriber.partner_name }}` and `{{ subscriber.partner_note }}` from the invited partner's record.
 
+## Book covers
+
+Spines and covers on the reading list are CSS recreations of each book's real design. The heart on the Atlas of the Heart cover (`assets/atlas-heart.jpg`) is cropped from the publisher's cover image (Penguin Random House, ISBN 9780399592553) and used to recommend the book.
+
 ## Placeholders
 
 Search for `data-placeholder`: Krysta's quote and two couple photos.

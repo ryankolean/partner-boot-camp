@@ -737,12 +737,18 @@ a { color: inherit; }
 .slot--mic .cv-author { margin-top: auto; padding: 0.45em; background: #1F2E4F; color: #F3EBDD; font: 600 0.9em/1 var(--oswald); text-transform: uppercase; letter-spacing: 0.12em; }
 
 /* Atlas of the Heart */
-.slot--aoh .book__spine, .slot--aoh .book__cover { background: #A3202C; color: #E9CF95; }
+.slot--aoh .book__spine, .slot--aoh .book__cover { background: #BD273A; color: #E9CF95; }
 .slot--aoh .sp-title { font: 500 0.74em/1 var(--serif); text-transform: uppercase; letter-spacing: 0.06em; }
 .slot--aoh .sp-author { font: 500 0.7em/1 var(--serif); text-transform: none; letter-spacing: 0.02em; }
 .slot--aoh .cv-author { font: 500 1.3em/1 var(--serif); }
-.slot--aoh .cv-heart { width: 6em; margin: 0.8em auto 0.6em; fill: none; stroke: #E9CF95; stroke-width: 2; stroke-linecap: round; }
-.slot--aoh .cv-heart circle { stroke: #9DC08B; }
+.slot--aoh .cv-art {
+  display: block;
+  width: 82%;
+  height: auto;
+  margin: 0.4em auto 0.3em;
+  -webkit-mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 72% 72% at 50% 50%, #000 62%, transparent 100%);
+}
 .slot--aoh .cv-title { font: 500 2em/0.95 var(--serif); text-transform: uppercase; letter-spacing: 0.04em; }
 .slot--aoh .cv-title small { display: block; margin: 0.3em 0; font-size: 0.4em; letter-spacing: 0.25em; }
 
@@ -773,9 +779,9 @@ a { color: inherit; }
 .slot--perry .book__cover { background: linear-gradient(90deg, #1F4FA6 0 7%, #F06A2A 7%); color: #FFFFFF; padding-left: 1.3em; text-align: left; }
 .slot--perry .sp-title { inline-size: 10.8em; white-space: normal; font: 500 0.74em/1.05 var(--serif); text-transform: none; letter-spacing: 0; }
 .slot--perry .sp-author { font: 500 0.62em/1 var(--serif); text-transform: none; letter-spacing: 0; color: #F6E3A0; }
-.slot--perry .cv-title { font: 500 1.65em/1.02 var(--serif); }
-.slot--perry .cv-sub { margin-top: 0.4em; font: 400 0.8em/1.15 var(--serif); color: #FBE7A6; }
-.slot--perry .cv-author { margin-top: auto; font: 500 1.2em/1 var(--serif); color: #FBE7A6; }
+.slot--perry .cv-title { font: 500 1.3em/1.04 var(--serif); }
+.slot--perry .cv-sub { margin-top: 0.45em; font: 400 0.68em/1.18 var(--serif); color: #FBE7A6; }
+.slot--perry .cv-author { margin-top: auto; font: 500 1em/1 var(--serif); color: #FBE7A6; }
 
 /* Vase of lilacs at the end of the shelf */
 .slot--vase { --t: 5.2; }

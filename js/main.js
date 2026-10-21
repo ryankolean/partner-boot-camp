@@ -404,17 +404,37 @@
       }
     };
 
+    // An open book's cover is wider than its spine and sits over its neighbors, so hover follows
+    // the pointer's x position across the spine slots rather than whichever element is on top.
+    let pending = null;
+    const slotAt = (clientX) => {
+      const left = row.getBoundingClientRect().left;
+      return slots.find((slot) => {
+        const x0 = left + slot.offsetLeft;
+        return clientX >= x0 && clientX < x0 + slot.offsetWidth + 2;
+      });
+    };
+    row.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      if (animated && slots.some((slot) => gsap.getProperty(slot, 'x') !== 0)) return;
+      clearTimeout(leaveTimer);
+      const slot = slotAt(e.clientX);
+      if (!slot || slot === pending) return;
+      if (slot === active) {
+        clearTimeout(hoverTimer);
+        pending = null;
+        return;
+      }
+      pending = slot;
+      clearTimeout(hoverTimer);
+      hoverTimer = setTimeout(() => {
+        pending = null;
+        open(slot);
+      }, 140);
+    });
+
     slots.forEach((slot) => {
       const book = slot.querySelector('.book');
-      slot.addEventListener('pointerenter', (e) => {
-        if (e.pointerType !== 'mouse') return;
-        clearTimeout(leaveTimer);
-        clearTimeout(hoverTimer);
-        hoverTimer = setTimeout(() => open(slot), 90);
-      });
-      slot.addEventListener('pointerleave', (e) => {
-        if (e.pointerType === 'mouse') clearTimeout(hoverTimer);
-      });
       book.addEventListener('pointerdown', (e) => (lastInput = e.pointerType));
       book.addEventListener('keydown', () => (lastInput = 'key'));
       book.addEventListener('click', () => {
@@ -429,6 +449,7 @@
     row.addEventListener('pointerleave', (e) => {
       if (e.pointerType !== 'mouse') return;
       clearTimeout(hoverTimer);
+      pending = null;
       leaveTimer = setTimeout(() => active && close(active), 220);
     });
     shelf.addEventListener('focusout', (e) => {
