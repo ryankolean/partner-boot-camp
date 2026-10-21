@@ -7,6 +7,7 @@
   --olive-deep: #5E6146;
   --terracotta: #C96F4A;
   --blush: #E8C4B8;
+  --lilac: #B79BD0;
   --ink: #2B2522;
   --ink-soft: #574C46;
 
@@ -236,7 +237,7 @@ a { color: inherit; }
 .opening__title {
   font-size: clamp(3.25rem, 10.5vw, 8.25rem);
   font-weight: 350;
-  line-height: 0.95;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
@@ -284,10 +285,12 @@ a { color: inherit; }
 .petal {
   position: absolute;
   top: -3rem;
-  width: 1.1rem;
-  fill: var(--blush);
-  opacity: 0.85;
+  width: 1.7rem;
+  fill: var(--lilac);
+  opacity: 0.9;
 }
+.petal--cluster { width: 3rem; }
+.lilac__eye { fill: var(--paper); }
 
 @media (min-width: 900px) {
   .opening__inner { grid-template-columns: 1.35fr 1fr; }
@@ -394,7 +397,7 @@ a { color: inherit; }
   background: var(--paper);
   border-radius: 2.5rem 2.5rem 2.5rem 0.75rem;
 }
-.spread__art { width: min(100%, 20rem); justify-self: center; }
+.spread__art { width: min(100%, 24rem); justify-self: center; }
 .spread__copy h3 {
   font-size: clamp(2.25rem, 5.5vw, 4rem);
   margin-bottom: 1.25rem;

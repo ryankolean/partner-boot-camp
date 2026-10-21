@@ -11,7 +11,9 @@
   .mark { position: absolute; left: 80px; top: 56px; font: 400 26px "Fraunces", serif; display: flex; gap: 10px; align-items: center; }
   svg.art { width: 360px; fill: none; stroke: #7A7D5C; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
   .accent { stroke: #C96F4A; }
-  .petal { position: absolute; width: 20px; fill: #E8C4B8; }
+  .petal { position: absolute; width: 26px; fill: #B79BD0; }
+  .petal--cluster { width: 46px; fill: #C9B1DE; }
+  .eye { fill: #FBF8F3; }
 </style>
 </head>
 <body>
@@ -32,9 +34,9 @@
     <path class="accent" d="M282 70 v16 M274 78 h16 M34 84 v10 M29 89 h10"/>
   </svg>
 </div>
-<svg class="petal" style="left:640px;top:80px;transform:rotate(30deg)" viewBox="0 0 20 24"><path d="M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z"/></svg>
-<svg class="petal" style="left:1100px;top:140px;transform:rotate(-40deg)" viewBox="0 0 20 24"><path d="M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z"/></svg>
-<svg class="petal" style="left:560px;top:540px;transform:rotate(80deg)" viewBox="0 0 20 24"><path d="M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z"/></svg>
-<svg class="petal" style="left:1040px;top:520px;transform:rotate(150deg)" viewBox="0 0 20 24"><path d="M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z"/></svg>
+<svg class="petal petal--cluster" style="left:640px;top:80px;transform:rotate(30deg)" viewBox="0 0 44 42"><g transform="translate(0 9) scale(0.9)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g><g transform="translate(18 0) scale(1)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g><g transform="translate(13 19) scale(0.85)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g></svg>
+<svg class="petal" style="left:1100px;top:140px;transform:rotate(-40deg)" viewBox="0 0 24 24"><g transform="translate(0 0) scale(1)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g></svg>
+<svg class="petal petal--cluster" style="left:560px;top:540px;transform:rotate(80deg)" viewBox="0 0 44 42"><g transform="translate(0 9) scale(0.9)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g><g transform="translate(18 0) scale(1)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g><g transform="translate(13 19) scale(0.85)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g></svg>
+<svg class="petal" style="left:1040px;top:520px;transform:rotate(150deg)" viewBox="0 0 24 24"><g transform="translate(0 0) scale(1)"><path d="M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z"/><circle class="eye" cx="12" cy="12" r="1.6"/></g></svg>
 </body>
 </html>

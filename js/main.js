@@ -1,6 +1,9 @@
 // Partner Boot Camp: storybook motion. Content is fully readable without this file.
 (() => {
   const root = document.documentElement;
+  const LILAC = ['#C9B1DE', '#B79BD0', '#D8C6E6', '#A88CC4'];
+  const LILAC_FLORET =
+    'M12 11 C 9 7, 9 2, 12 2 C 15 2, 15 7, 12 11 Z M13 12 C 17 9, 22 9, 22 12 C 22 15, 17 15, 13 12 Z M12 13 C 15 17, 15 22, 12 22 C 9 22, 9 17, 12 13 Z M11 12 C 7 15, 2 15, 2 12 C 2 9, 7 9, 11 12 Z';
   const reduceQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   initShelf();
@@ -125,10 +128,11 @@
     const host = document.querySelector('[data-petals]');
     if (!host) return;
     const count = wide ? 14 : 6;
-    host.innerHTML = '<svg class="petal" viewBox="0 0 20 24"><path d="M10 0 C 17 6, 17 16, 10 24 C 3 16, 3 6, 10 0 Z"/></svg>'.repeat(count);
+    host.innerHTML = lilacs(count);
     const tweens = [];
-    host.querySelectorAll('.petal').forEach((el) => {
+    host.querySelectorAll('.petal').forEach((el, i) => {
       gsap.set(el, {
+        fill: LILAC[i % LILAC.length],
         left: `${gsap.utils.random(2, 98)}%`,
         scale: gsap.utils.random(0.6, 1.35),
         rotation: gsap.utils.random(0, 360),
@@ -201,9 +205,9 @@
       ease: 'power3.out',
       scrollTrigger: { trigger: '.spread', start: 'top 88%' },
     });
-    gsap.from('.spread__art > *', {
+    gsap.from('.spread__art path, .spread__art circle', {
       drawSVG: 0,
-      stagger: 0.1,
+      stagger: 0.04,
       ease: 'none',
       scrollTrigger: { trigger: '.spread', start: 'top 75%', end: 'center 50%', scrub: 0.6 },
     });
@@ -298,6 +302,15 @@
       ease: 'power2.out',
       scrollTrigger: { trigger: '.promises', start: 'top 78%' },
     });
+  }
+
+  // Krysta's favorite flower: falling lilac florets, some single, some in small clusters.
+  function lilacs(count) {
+    const floret = (x, y, k) =>
+      `<g transform="translate(${x} ${y}) scale(${k})"><path d="${LILAC_FLORET}"/><circle class="lilac__eye" cx="12" cy="12" r="1.6"/></g>`;
+    const single = `<svg class="petal" viewBox="0 0 24 24">${floret(0, 0, 1)}</svg>`;
+    const cluster = `<svg class="petal petal--cluster" viewBox="0 0 44 42">${floret(0, 9, 0.9)}${floret(18, 0, 1)}${floret(13, 19, 0.85)}</svg>`;
+    return Array.from({ length: count }, (_, i) => (i % 3 === 0 ? cluster : single)).join('');
   }
 
   // Reading list: hovering, focusing, or tapping a spine shows its note.
