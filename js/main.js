@@ -103,6 +103,7 @@
       spread();
       const cleanupLevels = wide ? levelsSpread(tall) : levelsStacked();
       philosophy();
+      teaser();
       shelfArrival();
       promises();
       return cleanupLevels;
@@ -311,6 +312,15 @@
         { autoAlpha: 1, scale: 1, rotation: 0, duration: 0.8, ease: 'back.out(2)', immediateRender: true },
         '-=0.35'
       );
+  }
+
+  // The capsule teaser's test sheet draws itself once as it comes into view.
+  function teaser() {
+    const art = document.querySelector('.teaser__art');
+    if (!art) return;
+    gsap.timeline({ scrollTrigger: { trigger: art, start: 'top 80%' } })
+      .from(art.querySelectorAll('path'), { drawSVG: 0, duration: 1, stagger: 0.07, ease: 'power2.inOut' })
+      .from(art.querySelectorAll('text'), { autoAlpha: 0, scale: 0.6, transformOrigin: '50% 50%', duration: 0.4, ease: 'back.out(2)' }, '-=0.4');
   }
 
   // Books slide in from beyond the right edge as the shelf scrolls into view, overshooting softly into place.

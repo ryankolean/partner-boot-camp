@@ -12,6 +12,7 @@ Static site, no build. See README.md for structure and the Kit setup.
 - No secrets client-side. Kit is reached only through its public form endpoints.
 - Every animation needs a reduced-motion path, and content must read fine with JS off.
 - Keep vendored library versions pinned; update `vendor/` deliberately.
+- New capsule: follow "Capsules" in README.md. Keep it to one signature motion (the loop) and never put real couples' stories in participant copy.
 
 ## Verify before shipping
 
