@@ -51,7 +51,7 @@ Credit the source by name and link to it, paraphrase it, and never embed its cli
 
 ## Kit
 
-Account: Partner Boot Camp (ryan.kolean+partnerbootcamp@gmail.com). The site posts to Kit's public form endpoints; no API keys in the repo.
+Account: Partner Boot Camp (login in 1Password). The site posts to Kit's public form endpoints; no API keys in the repo.
 
 | Thing | Name | ID |
 |---|---|---|
