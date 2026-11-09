@@ -75,7 +75,7 @@ Spines and covers on the reading list are CSS recreations of each book's real de
 
 ## Placeholders
 
-Search for `data-placeholder`: Krysta's quote and two couple photos.
+Search for `data-placeholder`: Krysta's quote.
 
 ## Share image
 
